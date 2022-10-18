@@ -1,0 +1,27 @@
+name: RewardYourTeacher CI
+
+on:
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        env:
+          port_number: 8080
+          db_port_number: ${{ secrets.db_port_number }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          CLIENT: ${{ secrets.CLIENT }}
+        run: mvn -B package --file pom.xml -Dspring.profiles.active=test
